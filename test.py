@@ -2,29 +2,20 @@ import random
 
 
 def input_to_float(question):
-    """Ask for user input and checks if user input is a float."""
+    """Ask for user input and checks if user input is a float.
+    If The input is incorrect, the function returns '0'."""
+
     other_symbols_found = []
     user_input = input(question)
-
-    if len(user_input) == 1 and user_input[0] == '.':
-        print("You must enter a value which has to be a number.")
-        return
-
     for i in user_input:
-        if i == ',':
-            user_input = user_input.replace(',', '.')
-        else:
-            if i.isalpha() or i.isspace():
-                other_symbols_found.append(i)
-            else:
-                pass
-
+        if i is not i.isdigit:
+            other_symbols_found.append(i)
     if len(other_symbols_found) == 0:
         user_input = float(user_input)
         return user_input
-    elif len(other_symbols_found) > 0:
+    else:
         print("You must enter a value which has to be a number.")
-        return
+        return 0
 
 
 class DebitCard:
@@ -48,21 +39,24 @@ class DebitCard:
         self.transactions = transactions
 
     def check_pin(self):
-        """Asks to enter PIN code and checks if the entered PIN code is correct."""
+        """Asks to enter PIN code and checks if the entered PIN code is correct.
+        If PIN was entered wrong 3 times, the function returns '0'."""
+
         attempts_given = 3
         while attempts_given:
             pin_entered = int(input("Enter your PIN code: "))
             if pin_entered == self.pin_code:
                 return
-            elif pin_entered != self.pin_code:
-                attempts_given -= 1
-                print(f"PIN code entered wrong. Attempts left: {attempts_given}")
+
+            attempts_given -= 1
+            print(f"PIN code entered wrong. Attempts left: {attempts_given}")
 
         print("You failed 3 times and can`t continue.")
         return int(attempts_given)
 
     def update_transactions(self):
         """Checks transactions history and makes sure not more than 5 would be kept."""
+
         while len(self.transactions) > 5:
             self.transactions.pop(0)
 
@@ -73,13 +67,17 @@ class DebitCard:
             ## TODO: Use 'pin_result' in order to stop program from further actions.
 
         money_added = input_to_float("How much money you want to add: ")
-        self.balance = self.balance + money_added
-        money_added_info = "+" + str(money_added) + "€"
-        self.transactions.append(money_added_info)
-        self.update_transactions()
-        print(f"{money_added}€ added successfully!")
+        if money_added == 0:
+            print()
+            ## TODO: Has to be changed in future.
+        else:
+            self.balance = self.balance + money_added
+            money_added_info = "+" + str(money_added) + "€"
+            self.transactions.append(money_added_info)
+            self.update_transactions()
+            print(f"{money_added}€ added successfully!")
 
-        return self.balance, self.transactions
+            return self.balance, self.transactions
 
     def take_money(self):
         pin_result = self.check_pin()
@@ -113,6 +111,8 @@ You can now takeout up to {self.takeout_limit}€ at once.
         return self.takeout_limit
 
     def change_pin(self):
+        """If PIN was entered wrong 3 times, function returns '0'."""
+
         attempts_given = 3
         while attempts_given:
             old_pin = int(input("Enter your old PIN code: "))
@@ -178,6 +178,6 @@ Last 3 transactions made: {card.transactions}
 
 card_1 = create_new_card()
 card_created_greet(card_1)
-card_1.change_pin()
+# card_1.change_pin()
 card_1.add_money()
-card_1.take_money()
+# card_1.take_money()
