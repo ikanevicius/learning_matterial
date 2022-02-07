@@ -1,21 +1,20 @@
 import random
 
 
-def input_to_float(question):
+def ask_input_float(question):
     """Ask for user input and checks if user input is a float.
     If The input is incorrect, the function returns '0'."""
 
-    other_symbols_found = []
     user_input = input(question)
     for i in user_input:
-        if i is not i.isdigit:
-            other_symbols_found.append(i)
-    if len(other_symbols_found) == 0:
+        if i is not i.isdigit or i is not "." or i is not ",":
+            print("You must enter a value which has to be a number.")
+            return 0
+        elif i is ",":
+            user_input = user_input.replace(',', '.')
+    else:
         user_input = float(user_input)
         return user_input
-    else:
-        print("You must enter a value which has to be a number.")
-        return 0
 
 
 class DebitCard:
@@ -44,12 +43,23 @@ class DebitCard:
 
         attempts_given = 3
         while attempts_given:
-            pin_entered = int(input("Enter your PIN code: "))
-            if pin_entered == self.pin_code:
-                return
+            pin_entered = input("Enter your PIN code: ")
 
-            attempts_given -= 1
-            print(f"PIN code entered wrong. Attempts left: {attempts_given}")
+            other_symbols = []
+            for i in pin_entered:
+                if i is not i.isdigit:
+                    other_symbols.append(i)
+
+            if len(other_symbols) != 0:
+                attempts_given -= 1
+                print(f"PIN code entered wrong. Attempts left: {attempts_given}")
+            else:
+                pin_entered = int(pin_entered)
+                if pin_entered != self.pin_code:
+                    attempts_given -= 1
+                    print(f"PIN code entered wrong. Attempts left: {attempts_given}")
+                else:
+                    return pin_entered
 
         print("You failed 3 times and can`t continue.")
         return int(attempts_given)
@@ -64,12 +74,12 @@ class DebitCard:
         pin_result = self.check_pin()
         if pin_result == 0:
             return pin_result
-            ## TODO: Use 'pin_result' in order to stop program from further actions.
+            # TODO: Use 'pin_result' in order to stop program from further actions.
 
-        money_added = input_to_float("How much money you want to add: ")
+        money_added = ask_input_float("How much money you want to add: ")
         if money_added == 0:
             print()
-            ## TODO: Has to be changed in future.
+            # TODO: Has to be changed in future.
         else:
             self.balance = self.balance + money_added
             money_added_info = "+" + str(money_added) + "€"
@@ -84,7 +94,7 @@ class DebitCard:
         if pin_result == 0:
             return pin_result
 
-        money_taken = input_to_float("How much money you want to withdraw: ")
+        money_taken = ask_input_float("How much money you want to withdraw: ")
         if money_taken <= self.balance:
             if money_taken <= self.takeout_limit:
                 self.balance = self.balance - money_taken
@@ -101,8 +111,8 @@ class DebitCard:
 
     def change_takeout_limit(self):
         self.check_pin()
-        set_new_limit = input_to_float("Enter your new takeout limit: ")
-        ## TODO: Has to be changed into 'int' in future update.
+        set_new_limit = ask_input_float("Enter your new takeout limit: ")
+        # TODO: Has to be changed into 'int' in future update.
         self.takeout_limit = set_new_limit
 
         print(f"""Your takeout limit was changed successfully!
