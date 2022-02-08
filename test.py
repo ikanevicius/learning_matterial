@@ -1,30 +1,56 @@
 import random
 
 
-def input_to_float(question):
-    """Ask for user input and checks if user input is a float."""
-    other_symbols_found = []
+def ask_input_float(question):
+    """Ask for user input and checks if user input is a float.
+    If The input is incorrect, the function returns '0'."""
+
     user_input = input(question)
+    user_input = user_input.replace(' ', '')
+    user_input = user_input.replace(',', '.')
+    if user_input.count(".") > 1:
+        print("___\n"
+              "TYPE ERROR.\n"
+              "You can`t use more than one dot (ether ',' or '.' to separate decimals.\n"
+              " ")
+        return 0
 
-    if len(user_input) == 1 and user_input[0] == '.':
-        print("You must enter a value which has to be a number.")
-        return
-
+    numbers = []
     for i in user_input:
-        if i == ',':
-            user_input = user_input.replace(',', '.')
+        if i.isnumeric() or i == ".":
+            numbers.append(i)
         else:
-            if i.isalpha() or i.isspace():
-                other_symbols_found.append(i)
-            else:
-                pass
+            continue
 
-    if len(other_symbols_found) == 0:
+    if len(numbers) == len(user_input):
         user_input = float(user_input)
+        user_input = round(user_input, 2)
+        # TODO: In future only numbers with two decimals could be added.
         return user_input
-    elif len(other_symbols_found) > 0:
-        print("You must enter a value which has to be a number.")
-        return
+    else:
+        print("___\n"
+              "TYPE ERROR. \n"
+              "Your input must be a number.\n"
+              " ")
+        return 0
+
+
+def ask_input_int(question):
+    """Ask for user input and checks if user input is an integer.
+    If The input is incorrect, the function returns '0'."""
+
+    user_input = input(question)
+    user_input = user_input.replace(' ', '')
+
+    if user_input.isnumeric():
+        user_input = int(user_input)
+        return user_input
+    else:
+        print("___\n"
+              "TYPE ERROR. \n"
+              "Your input must be a number and can`t have decimals.\n"
+              " ")
+        return 0
 
 
 class DebitCard:
@@ -48,20 +74,33 @@ class DebitCard:
         self.transactions = transactions
 
     def check_pin(self):
-        """Asks to enter PIN code and checks if the entered PIN code is correct."""
+        """Asks to enter PIN code and checks if the entered PIN code is correct.
+        If PIN was entered wrong 3 times, the function returns '0'."""
+
         attempts_given = 3
         while attempts_given:
-            pin_entered = int(input("Enter your PIN code: "))
-            if pin_entered == self.pin_code:
-                return
-            elif pin_entered != self.pin_code:
+            pin_entered = input("Enter your PIN code: ")
+
+            if len(pin_entered) == 4 and pin_entered.isnumeric():
+                pin_entered = int(pin_entered)
+
+                if pin_entered != self.pin_code:
+                    attempts_given -= 1
+                    print(f"""TYPE ERROR.\n
+                    PIN code entered wrong. Attempts left: {attempts_given}""")
+                else:
+                    return
+
+            else:
                 attempts_given -= 1
                 print(f"PIN code entered wrong. Attempts left: {attempts_given}")
+
         print("You failed 3 times and can`t continue.")
         return int(attempts_given)
 
     def update_transactions(self):
         """Checks transactions history and makes sure not more than 5 would be kept."""
+
         while len(self.transactions) > 5:
             self.transactions.pop(0)
 
@@ -69,14 +108,19 @@ class DebitCard:
         pin_result = self.check_pin()
         if pin_result == 0:
             return pin_result
-            ## TODO: Use 'pin_result' in order to stop program from further actions.
+            # TODO: Use 'pin_result' in order to stop program from further actions.
+
+        money_added = ask_input_float("How much money you want to add: ")
+        if money_added == 0:
+            print()
+            # TODO: Has to be changed in future.
         else:
-            money_added = input_to_float("How much money you want to add: ")
             self.balance = self.balance + money_added
             money_added_info = "+" + str(money_added) + "€"
             self.transactions.append(money_added_info)
             self.update_transactions()
-            print(f"{money_added}€ added successfully!")
+            print(f"""{money_added}€ added successfully!
+""")
 
             return self.balance, self.transactions
 
@@ -84,54 +128,71 @@ class DebitCard:
         pin_result = self.check_pin()
         if pin_result == 0:
             return pin_result
-        else:
-            money_taken = input_to_float("How much money you want to withdraw: ")
-            if money_taken <= self.balance:
-                if money_taken <= self.takeout_limit:
-                    self.balance = self.balance - money_taken
-                    money_taken_info = "-" + str(money_taken) + "€"
-                    self.transactions.append(money_taken_info)
-                    self.update_transactions()
-                    print(f"{money_taken}€ taken successfully!")
-                elif money_taken > self.takeout_limit:
-                    print(f"Your can`t takeout more than {self.takeout_limit}€ at once.")
-            elif money_taken > self.balance:
-                print(f"""You don`t have enough money to withdraw {money_taken}€ from your account.""")
+
+        money_taken = ask_input_float("How much money you want to withdraw: ")
+        if money_taken <= self.balance:
+            if money_taken <= self.takeout_limit:
+                self.balance = self.balance - money_taken
+                money_taken_info = "-" + str(money_taken) + "€"
+                self.transactions.append(money_taken_info)
+                self.update_transactions()
+                print(f"""{money_taken}€ taken successfully!
+""")
+            elif money_taken > self.takeout_limit:
+                print(f"""___
+TAKEOUT LIMIT ERROR.
+Your can`t takeout more than {self.takeout_limit}€ at once.
+""")
+        elif money_taken > self.balance:
+            print(f"""___
+BALANCE ERROR.
+You don`t have enough money to withdraw {money_taken}€ from your account.
+""")
 
             return self.balance, self.transactions
 
     def change_takeout_limit(self):
         self.check_pin()
-        set_new_limit = input_to_float("Enter your new takeout limit: ")
-        ## TODO: Has to be changed into 'int' in future update.
-        self.takeout_limit = set_new_limit
+        set_new_limit = ask_input_int("Enter your new takeout limit: ")
+        if set_new_limit == 0:
+            print()
+            # TODO: Has to be changed in future.
+        else:
+            self.takeout_limit = set_new_limit
 
-        print(f"""Your takeout limit was changed successfully! 
+        print(f"""Your takeout limit was changed successfully!
 You can now takeout up to {self.takeout_limit}€ at once.
 """)
         return self.takeout_limit
 
     def change_pin(self):
+        """If PIN was entered wrong 3 times, function returns '0'."""
+
         attempts_given = 3
         while attempts_given:
             old_pin = int(input("Enter your old PIN code: "))
-            if old_pin == self.pin_code:
-                new_pin = int(input("Enter your new PIN code: "))
-                if len(str(new_pin)) == 4 and new_pin != old_pin:
-                    self.pin_code = new_pin
-                    print(f"""Your PIN code was successfully changed! \nYour new PIN is {self.pin_code}. """)
-                    break
-                elif len(str(new_pin)) == 4 and new_pin == old_pin:
-                    print("New PIN code can`t bet the same as the old one.")
-                    attempts_given -= 1
-                elif len(str(new_pin)) != 4:
-                    print("PIN code must contain 4 digits.")
-                    attempts_given -= 1
-            elif old_pin != self.pin_code:
+
+            if old_pin != self.pin_code:
                 print(f"Old PIN code was entered wrong. Please try again.")
                 attempts_given -= 1
-        else:
-            print("You failed 3 times and can`t change the PIN code now.")
+                continue
+
+            new_pin = int(input("Enter your new PIN code: "))
+            if len(str(new_pin)) == 4 and new_pin != old_pin:
+                self.pin_code = new_pin
+                print(f"""Your PIN code was successfully changed! \nYour new PIN is {self.pin_code}.\n""")
+                return attempts_given
+
+            elif len(str(new_pin)) == 4 and new_pin == old_pin:
+                print("New PIN code can`t bet the same as the old one.")
+                attempts_given -= 1
+
+            elif len(str(new_pin)) != 4:
+                print("PIN code must contain 4 digits.")
+                attempts_given -= 1
+
+        print("You failed 3 times and can`t change the PIN code now.")
+        return attempts_given
 
 
 def create_new_card():
@@ -157,7 +218,8 @@ def create_new_card():
 
 
 def card_created_greet(card):
-    print(f"""Dear {card.holder_name} {card.holder_surname}, your debit card was created successfully!
+    print(f"""
+Dear {card.holder_name} {card.holder_surname}, your debit card was created successfully!
 Your card number is {card.card_number}, PIN: {card.pin_code}.
 You will be able to take no more than {card.takeout_limit}€ at once.
 """)
@@ -172,5 +234,7 @@ Last 3 transactions made: {card.transactions}
 
 card_1 = create_new_card()
 card_created_greet(card_1)
+# # card_1.change_pin()
 card_1.add_money()
-card_1.take_money()
+card_1.change_takeout_limit()
+# # card_1.take_money()
