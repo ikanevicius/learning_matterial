@@ -35,6 +35,24 @@ def ask_input_float(question):
         return 0
 
 
+def ask_input_int(question):
+    """Ask for user input and checks if user input is an integer.
+    If The input is incorrect, the function returns '0'."""
+
+    user_input = input(question)
+    user_input = user_input.replace(' ', '')
+
+    if user_input.isnumeric():
+        user_input = int(user_input)
+        return user_input
+    else:
+        print("___\n"
+              "TYPE ERROR. \n"
+              "Your input must be a number and can`t have decimals.\n"
+              " ")
+        return 0
+
+
 class DebitCard:
     def __init__(
             self,
@@ -58,7 +76,6 @@ class DebitCard:
     def check_pin(self):
         """Asks to enter PIN code and checks if the entered PIN code is correct.
         If PIN was entered wrong 3 times, the function returns '0'."""
-        # TODO: Does not work when entered correct PIN.
 
         attempts_given = 3
         while attempts_given:
@@ -72,7 +89,7 @@ class DebitCard:
                     print(f"""TYPE ERROR.\n
                     PIN code entered wrong. Attempts left: {attempts_given}""")
                 else:
-                    return pin_entered
+                    return
 
             else:
                 attempts_given -= 1
@@ -102,7 +119,8 @@ class DebitCard:
             money_added_info = "+" + str(money_added) + "€"
             self.transactions.append(money_added_info)
             self.update_transactions()
-            print(f"{money_added}€ added successfully!")
+            print(f"""{money_added}€ added successfully!
+""")
 
             return self.balance, self.transactions
 
@@ -118,27 +136,33 @@ class DebitCard:
                 money_taken_info = "-" + str(money_taken) + "€"
                 self.transactions.append(money_taken_info)
                 self.update_transactions()
-                print(f"{money_taken}€ taken successfully!")
+                print(f"""{money_taken}€ taken successfully!
+""")
             elif money_taken > self.takeout_limit:
-                print(f"""___\n
-                TAKEOUT LIMIT ERROR.\n
-                Your can`t takeout more than {self.takeout_limit}€ at once.""")
+                print(f"""___
+TAKEOUT LIMIT ERROR.
+Your can`t takeout more than {self.takeout_limit}€ at once.
+""")
         elif money_taken > self.balance:
-            print(f"""___\n
-            BALANCE ERROR.\n
-            You don`t have enough money to withdraw {money_taken}€ from your account.""")
+            print(f"""___
+BALANCE ERROR.
+You don`t have enough money to withdraw {money_taken}€ from your account.
+""")
 
             return self.balance, self.transactions
 
     def change_takeout_limit(self):
         self.check_pin()
-        set_new_limit = ask_input_float("Enter your new takeout limit: ")
-        # TODO: Has to be changed into 'int' in future update.
-        self.takeout_limit = set_new_limit
+        set_new_limit = ask_input_int("Enter your new takeout limit: ")
+        if set_new_limit == 0:
+            print()
+            # TODO: Has to be changed in future.
+        else:
+            self.takeout_limit = set_new_limit
 
-        print(f"""Your takeout limit was changed successfully!\n
-        You can now takeout up to {self.takeout_limit}€ at once.
-        """)
+        print(f"""Your takeout limit was changed successfully!
+You can now takeout up to {self.takeout_limit}€ at once.
+""")
         return self.takeout_limit
 
     def change_pin(self):
@@ -212,4 +236,5 @@ card_1 = create_new_card()
 card_created_greet(card_1)
 # # card_1.change_pin()
 card_1.add_money()
+card_1.change_takeout_limit()
 # # card_1.take_money()
