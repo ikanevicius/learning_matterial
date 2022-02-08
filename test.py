@@ -17,9 +17,7 @@ def ask_input_float(question):
 
     numbers = []
     for i in user_input:
-        if i.isnumeric():
-            numbers.append(i)
-        if i == ".":
+        if i.isnumeric() or i == ".":
             numbers.append(i)
         else:
             continue
@@ -66,22 +64,19 @@ class DebitCard:
         while attempts_given:
             pin_entered = input("Enter your PIN code: ")
 
-            other_symbols = []
-            for i in pin_entered:
-                if i != i.isdigit:
-                    other_symbols.append(i)
-
-            if len(other_symbols) != 0:
-                attempts_given -= 1
-                print(f"PIN code entered wrong. Attempts left: {attempts_given}")
-            else:
+            if len(pin_entered) == 4 and pin_entered.isnumeric():
                 pin_entered = int(pin_entered)
+
                 if pin_entered != self.pin_code:
                     attempts_given -= 1
                     print(f"""TYPE ERROR.\n
                     PIN code entered wrong. Attempts left: {attempts_given}""")
                 else:
                     return pin_entered
+
+            else:
+                attempts_given -= 1
+                print(f"PIN code entered wrong. Attempts left: {attempts_given}")
 
         print("You failed 3 times and can`t continue.")
         return int(attempts_given)
@@ -93,10 +88,10 @@ class DebitCard:
             self.transactions.pop(0)
 
     def add_money(self):
-        # pin_result = self.check_pin()
-        # if pin_result == 0:
-        #     return pin_result
-        #     # TODO: Use 'pin_result' in order to stop program from further actions.
+        pin_result = self.check_pin()
+        if pin_result == 0:
+            return pin_result
+            # TODO: Use 'pin_result' in order to stop program from further actions.
 
         money_added = ask_input_float("How much money you want to add: ")
         if money_added == 0:
@@ -199,7 +194,8 @@ def create_new_card():
 
 
 def card_created_greet(card):
-    print(f"""Dear {card.holder_name} {card.holder_surname}, your debit card was created successfully!
+    print(f"""
+Dear {card.holder_name} {card.holder_surname}, your debit card was created successfully!
 Your card number is {card.card_number}, PIN: {card.pin_code}.
 You will be able to take no more than {card.takeout_limit}€ at once.
 """)
