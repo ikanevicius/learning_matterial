@@ -9,7 +9,7 @@ def ask_input_float(question):
     user_input = user_input.replace(' ', '')
     user_input = user_input.replace(',', '.')
     if user_input.count(".") > 1:
-        print("___\n"
+        print("\n"
               "TYPE ERROR.\n"
               "You can`t use more than one dot (ether ',' or '.' to separate decimals.\n"
               " ")
@@ -28,7 +28,7 @@ def ask_input_float(question):
         # TODO: In future only numbers with two decimals could be added.
         return user_input
     else:
-        print("___\n"
+        print("\n"
               "TYPE ERROR. \n"
               "Your input must be a number.\n"
               " ")
@@ -46,7 +46,7 @@ def ask_input_int(question):
         user_input = int(user_input)
         return user_input
     else:
-        print("___\n"
+        print("\n"
               "TYPE ERROR. \n"
               "Your input must be a number and can`t have decimals.\n"
               " ")
@@ -92,10 +92,10 @@ Your orders: """)
             self.change_takeout_limit()
             self.lobby()
         elif user_input == "x":
-            print(f"""
-___
-PROGRAM HAS BEEN STOPPED.
+            print(f"""PROGRAM HAS BEEN STOPPED.
 Have a nice day, {self.holder_name}!""")
+        else:
+            self.lobby()
 
     def check_pin(self):
         """Asks to enter PIN code and checks if the entered PIN code is correct.
@@ -110,17 +110,17 @@ Have a nice day, {self.holder_name}!""")
 
                 if pin_entered != self.pin_code:
                     attempts_given -= 1
-                    print(f"""
-TYPE ERROR.
-PIN code entered wrong. Attempts left: {attempts_given}""")
+                    print(f"""TYPE ERROR.
+PIN code entered wrong. Attempts left: {attempts_given}
+""")
                 else:
                     return
 
             else:
                 attempts_given -= 1
-                print(f"""
-TYPE ERROR.
-PIN code entered wrong. Attempts left: {attempts_given}""")
+                print(f"""TYPE ERROR.
+PIN code entered wrong. Attempts left: {attempts_given}
+""")
 
         print("You failed 3 times and can`t continue.")
         return int(attempts_given)
@@ -166,12 +166,12 @@ PIN code entered wrong. Attempts left: {attempts_given}""")
                 print(f"""{money_taken}€ taken successfully!
 """)
             elif money_taken > self.takeout_limit:
-                print(f"""___
+                print(f"""
 TAKEOUT LIMIT EXCEEDED.
 Your can`t takeout more than {self.takeout_limit}€ at once.
 """)
         elif money_taken > self.balance:
-            print(f"""___
+            print(f"""
 NOT ENOUGH MONEY.
 You don`t have enough money to withdraw {money_taken}€ from your account.
 """)
@@ -224,8 +224,7 @@ Your new PIN is {self.pin_code}.
         return attempts_given
 
     def card_info(self):
-        print(f"""___
-Balance: {round(self.balance, 2)}€, 
+        print(f"""Balance: {round(self.balance, 2)}€, 
 Last 3 transactions made: {self.transactions}
 """)
 
