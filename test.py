@@ -73,6 +73,30 @@ class DebitCard:
         self.takeout_limit = int(takeout_limit)
         self.transactions = transactions
 
+    def lobby(self):
+        user_input = input("""___
+Your orders: """)
+        if user_input == "0":
+            self.card_info()
+            self.lobby()
+        elif user_input == "1":
+            self.add_money()
+            self.lobby()
+        elif user_input == "2":
+            self.change_pin()
+            self.lobby()
+        elif user_input == "3":
+            self.take_money()
+            self.lobby()
+        elif user_input == "4":
+            self.change_takeout_limit()
+            self.lobby()
+        elif user_input == "x":
+            print(f"""
+___
+PROGRAM HAS BEEN STOPPED.
+Have a nice day, {self.holder_name}!""")
+
     def check_pin(self):
         """Asks to enter PIN code and checks if the entered PIN code is correct.
         If PIN was entered wrong 3 times, the function returns '0'."""
@@ -86,14 +110,17 @@ class DebitCard:
 
                 if pin_entered != self.pin_code:
                     attempts_given -= 1
-                    print(f"""TYPE ERROR.\n
-                    PIN code entered wrong. Attempts left: {attempts_given}""")
+                    print(f"""
+TYPE ERROR.
+PIN code entered wrong. Attempts left: {attempts_given}""")
                 else:
                     return
 
             else:
                 attempts_given -= 1
-                print(f"PIN code entered wrong. Attempts left: {attempts_given}")
+                print(f"""
+TYPE ERROR.
+PIN code entered wrong. Attempts left: {attempts_given}""")
 
         print("You failed 3 times and can`t continue.")
         return int(attempts_given)
@@ -140,12 +167,12 @@ class DebitCard:
 """)
             elif money_taken > self.takeout_limit:
                 print(f"""___
-TAKEOUT LIMIT ERROR.
+TAKEOUT LIMIT EXCEEDED.
 Your can`t takeout more than {self.takeout_limit}€ at once.
 """)
         elif money_taken > self.balance:
             print(f"""___
-BALANCE ERROR.
+NOT ENOUGH MONEY.
 You don`t have enough money to withdraw {money_taken}€ from your account.
 """)
 
@@ -180,7 +207,9 @@ You can now takeout up to {self.takeout_limit}€ at once.
             new_pin = int(input("Enter your new PIN code: "))
             if len(str(new_pin)) == 4 and new_pin != old_pin:
                 self.pin_code = new_pin
-                print(f"""Your PIN code was successfully changed! \nYour new PIN is {self.pin_code}.\n""")
+                print(f"""Your PIN code was successfully changed!
+Your new PIN is {self.pin_code}.
+""")
                 return attempts_given
 
             elif len(str(new_pin)) == 4 and new_pin == old_pin:
@@ -193,6 +222,12 @@ You can now takeout up to {self.takeout_limit}€ at once.
 
         print("You failed 3 times and can`t change the PIN code now.")
         return attempts_given
+
+    def card_info(self):
+        print(f"""___
+Balance: {round(self.balance, 2)}€, 
+Last 3 transactions made: {self.transactions}
+""")
 
 
 def create_new_card():
@@ -225,16 +260,6 @@ You will be able to take no more than {card.takeout_limit}€ at once.
 """)
 
 
-def card_info(card):
-    print(f"""___
-Balance: {round(card.balance, 2)}€, 
-Last 3 transactions made: {card.transactions}
-""")
-
-
 card_1 = create_new_card()
 card_created_greet(card_1)
-# # card_1.change_pin()
-card_1.add_money()
-card_1.change_takeout_limit()
-# # card_1.take_money()
+card_1.lobby()
