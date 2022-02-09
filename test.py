@@ -11,7 +11,7 @@ def ask_input_float(question):
     if user_input.count(".") > 1:
         print("\n"
               "TYPE ERROR.\n"
-              "You can`t use more than one dot (ether ',' or '.' to separate decimals.\n"
+              "You can`t use more than one dot (ether ',' or '.') to separate decimals.\n"
               " ")
         return 0
 
@@ -99,7 +99,7 @@ Have a nice day, {self.holder_name}!""")
 
     def check_pin(self):
         """Asks to enter PIN code and checks if the entered PIN code is correct.
-        If PIN was entered wrong 3 times, the function returns '0'."""
+        If PIN code was entered wrong 3 times, the function returns '0'."""
 
         attempts_given = 3
         while attempts_given:
@@ -108,18 +108,16 @@ Have a nice day, {self.holder_name}!""")
             if len(pin_entered) == 4 and pin_entered.isnumeric():
                 pin_entered = int(pin_entered)
 
-                if pin_entered != self.pin_code:
+                if pin_entered != int(self.pin_code):
                     attempts_given -= 1
-                    print(f"""TYPE ERROR.
-PIN code entered wrong. Attempts left: {attempts_given}
+                    print(f"""PIN code entered wrong. Attempts left: {attempts_given}
 """)
                 else:
                     return
 
             else:
                 attempts_given -= 1
-                print(f"""TYPE ERROR.
-PIN code entered wrong. Attempts left: {attempts_given}
+                print(f"""PIN code entered wrong. Attempts left: {attempts_given}
 """)
 
         print("You failed 3 times and can`t continue.")
@@ -186,40 +184,60 @@ You don`t have enough money to withdraw {money_taken}€ from your account.
         else:
             self.takeout_limit = set_new_limit
 
-        print(f"""Your takeout limit was changed successfully!
+        print(f"""
+Your takeout limit was changed successfully!
 You can now takeout up to {self.takeout_limit}€ at once.
 """)
         return self.takeout_limit
 
     def set_pin(self):
-        """If PIN was entered wrong 3 times, function returns '0'."""
+        """Lets user change existing PIN code into the new one.
+        If user makes mistakes 3 times, function returns '0'."""
 
         attempts_given = 3
         while attempts_given:
-            old_pin = int(input("Enter your old PIN code: "))
+            old_pin = input("Enter your old PIN code: ")
 
-            if old_pin != self.pin_code:
-                print(f"Old PIN code was entered wrong. Please try again.")
+            if not old_pin.isnumeric():
                 attempts_given -= 1
+                print(f"""PIN code must be a number. Attempts left: {attempts_given}
+""")
                 continue
 
-            new_pin = int(input("Enter your new PIN code: "))
-            if len(str(new_pin)) == 4 and new_pin != old_pin:
-                self.pin_code = new_pin
-                print(f"""Your PIN code was successfully changed!
+            old_pin = int(old_pin)
+            if old_pin != self.pin_code:
+                attempts_given -= 1
+                print(f"""Old PIN code was entered wrong. Attempts left: {attempts_given}
+""")
+                continue
+
+            new_pin = input("Enter your new PIN code: ")
+            if not new_pin.isnumeric():
+                attempts_given -= 1
+                print(f"""PIN code must be a number. Attempts left: {attempts_given}
+""")
+                continue
+            else:
+                if len(new_pin) == 4 and new_pin != old_pin:
+                    self.pin_code = new_pin
+                    print(f"""
+Your PIN code was successfully changed!
 Your new PIN is {self.pin_code}.
 """)
-                return attempts_given
+                    return attempts_given
 
-            elif len(str(new_pin)) == 4 and new_pin == old_pin:
-                print("New PIN code can`t bet the same as the old one.")
-                attempts_given -= 1
+                elif len(str(new_pin)) == 4 and new_pin == old_pin:
+                    attempts_given -= 1
+                    print(f"""New PIN code can`t bet the same as the old one. Attempts left: {attempts_given}
+""")
 
-            elif len(str(new_pin)) != 4:
-                print("PIN code must contain 4 digits.")
-                attempts_given -= 1
+                elif len(str(new_pin)) != 4:
+                    attempts_given -= 1
+                    print(f"""PIN code must contain 4 digits.
+""")
 
-        print("You failed 3 times and can`t change the PIN code now.")
+        print("""You failed 3 times and can`t change the PIN code now.
+""")
         return attempts_given
 
     def card_info(self):
