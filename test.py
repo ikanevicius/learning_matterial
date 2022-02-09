@@ -3,7 +3,7 @@ import random
 
 def ask_input_float(question):
     """Ask for user input and checks if user input is a float.
-    If The input is incorrect, the function returns '0'."""
+    If the input is incorrect, the function returns '0'."""
 
     user_input = input(question)
     user_input = user_input.replace(' ', '')
@@ -37,7 +37,7 @@ def ask_input_float(question):
 
 def ask_input_int(question):
     """Ask for user input and checks if user input is an integer.
-    If The input is incorrect, the function returns '0'."""
+    If the input is incorrect, the function returns '0'."""
 
     user_input = input(question)
     user_input = user_input.replace(' ', '')
@@ -83,13 +83,13 @@ Your orders: """)
             self.add_money()
             self.lobby()
         elif user_input == "2":
-            self.change_pin()
+            self.set_pin()
             self.lobby()
         elif user_input == "3":
             self.take_money()
             self.lobby()
         elif user_input == "4":
-            self.change_takeout_limit()
+            self.set_takeout_limit()
             self.lobby()
         elif user_input == "x":
             print(f"""PROGRAM HAS BEEN STOPPED.
@@ -125,9 +125,10 @@ PIN code entered wrong. Attempts left: {attempts_given}
         print("You failed 3 times and can`t continue.")
         return int(attempts_given)
 
-    def update_transactions(self):
+    def update_transactions(self, transaction_info):
         """Checks transactions history and makes sure not more than 5 would be kept."""
 
+        self.transactions.append(transaction_info)
         while len(self.transactions) > 5:
             self.transactions.pop(0)
 
@@ -144,8 +145,7 @@ PIN code entered wrong. Attempts left: {attempts_given}
         else:
             self.balance = self.balance + money_added
             money_added_info = "+" + str(money_added) + "€"
-            self.transactions.append(money_added_info)
-            self.update_transactions()
+            self.update_transactions(money_added_info)
             print(f"""{money_added}€ added successfully!
 """)
 
@@ -161,8 +161,7 @@ PIN code entered wrong. Attempts left: {attempts_given}
             if money_taken <= self.takeout_limit:
                 self.balance = self.balance - money_taken
                 money_taken_info = "-" + str(money_taken) + "€"
-                self.transactions.append(money_taken_info)
-                self.update_transactions()
+                self.update_transactions(money_taken_info)
                 print(f"""{money_taken}€ taken successfully!
 """)
             elif money_taken > self.takeout_limit:
@@ -178,7 +177,7 @@ You don`t have enough money to withdraw {money_taken}€ from your account.
 
             return self.balance, self.transactions
 
-    def change_takeout_limit(self):
+    def set_takeout_limit(self):
         self.check_pin()
         set_new_limit = ask_input_int("Enter your new takeout limit: ")
         if set_new_limit == 0:
@@ -192,7 +191,7 @@ You can now takeout up to {self.takeout_limit}€ at once.
 """)
         return self.takeout_limit
 
-    def change_pin(self):
+    def set_pin(self):
         """If PIN was entered wrong 3 times, function returns '0'."""
 
         attempts_given = 3
@@ -225,7 +224,7 @@ Your new PIN is {self.pin_code}.
 
     def card_info(self):
         print(f"""Balance: {round(self.balance, 2)}€, 
-Last 3 transactions made: {self.transactions}
+Last 5 transactions made: {self.transactions}
 """)
 
 
