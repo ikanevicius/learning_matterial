@@ -30,8 +30,7 @@ def ask_input_float(question):
     else:
         print("\n"
               "TYPE ERROR. \n"
-              "Your input must be a number.\n"
-              " ")
+              "Your input must be a number.")
         return 0
 
 
@@ -48,8 +47,7 @@ def ask_input_int(question):
     else:
         print("\n"
               "TYPE ERROR. \n"
-              "Your input must be a number and can`t have decimals.\n"
-              " ")
+              "Your input must be a number and can`t have decimals.")
         return 0
 
 
